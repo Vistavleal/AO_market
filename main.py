@@ -1,9 +1,20 @@
 import json
 import time
 import requests
-from items import *
+import subprocess
+import threading
+import os
 
-city_numb = 2
+from utils import *
+
+#def _start_AOdata():
+#    print("Launching albiondata-client")
+#    subprocess.Popen("ao_client")
+#
+#
+#ao_data_project = threading.Thread(target=_start_AOdata)
+#ao_data_project.start()
+#
 """
 Thetford
 Fort Sterling
@@ -18,53 +29,37 @@ item_id + \
 '?locations=BlackMarket,Caerleon&qualities=1'
 r = requests.get(url, allow_redirects=False)
 
-open ('AO_db.json', "wb").write(r.content)
+open ('AO_bd.json', "wb").write(r.content)
 
-with open('AO_db.json', 'r') as file:
+with open('AO_bd.json', 'r') as file:
     data = json.load(file)
 
-with open('AO_db.json', 'w') as file:
+# Представление бд в читаемой форме
+with open('AO_bd.json', 'w') as file:
     json.dump(data, file, indent=3)
 
-MARKET_TAX = 0.10
-
-priority_list = []
-
-def alg_KPP(m_data):
-    # Анализируем следующие позиции:
-    # Стоимость производства, налоги и стоимость продажи
-    i = -1
-    for iter in m_data:
-        i += 1
-        for item in complex_items:
-            if iter["city"] == "Caerleon":
-                if iter["item_id"] == item and "BAG" in iter["item_id"]:
-                    craft_cost = 8 * (m_data[i+city_numb]["sell_price_min"] + m_data[i+city_numb*2]["sell_price_min"])
-                    income = iter["buy_price_max"] - craft_cost
-                    if income <= 0:
-                        continue
-                    else:
-                        priority_list.append([iter["item_id"], income, 0, iter["quality"]])
 
 
-def alg_KDPD(m_data):
-    bm_prices = {}
-    for iter in m_data:
-        if iter["city"] in "Black Market":
-            bm_prices[iter["item_id"]] = iter["buy_price_max"]
-            continue
+#for iter in data:
+#    if iter["city"] not in 'Black Market':
+#        print ("{:<25} SELL: {:<10} BUY: {:<10} QUALITY: {:<5}".format(
+#                iter['item_id'],
+#                iter['sell_price_min'],
+#                iter["buy_price_max"],
+#                iter["quality"]
+#                ))
 
-        income = bm_prices[iter["item_id"]] - iter["sell_price_min"]
-        if income <= 0:
-            continue
-        else:
-            priority_list.append([iter["item_id"], income, 1, iter["quality"]])
 
-#alg_KPP(data)
+alg_KPP(data)
 alg_KDPD(data)
 
+sort(priority_list)
 
-print("Item_id\t\t\tIncome\tAlgorythm\tQuality") for i in range(0,len(priority_list)):
-    print(
-            priority_list[i][0],"\t", priority_list[i][1], "\t", priority_list[i][2], "\t\t", priority_list[i][3]
-            )
+print("{:>25}|{:>25}|{:>25}|{:>25}".format("item id", "income", "algorythm", "quality"))
+for i in range(len(priority_list)-1, -1, -1):
+    if priority_list[i][2] == 0:
+        print("{:>25}|{:>25}|{:>25}|{:>25}".format(priority_list[i][0], priority_list[i][1], "KPP", priority_list[i][3]))
+for i in range(len(priority_list)-1, -1, -1):
+    if priority_list[i][2] == 1:
+        print("{:>25}|{:>25}|{:>25}|{:>25}".format(priority_list[i][0], priority_list[i][1], "KDPD", priority_list[i][3]))
+
