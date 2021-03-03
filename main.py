@@ -64,8 +64,7 @@ def alg_KDPD(m_data):
 alg_KDPD(data)
 
 
-print("Item_id\t\t\tIncome\tAlgorythm\tQuality")
-for i in range(0,len(priority_list)):
+print("Item_id\t\t\tIncome\tAlgorythm\tQuality") for i in range(0,len(priority_list)):
     print(
             priority_list[i][0],"\t", priority_list[i][1], "\t", priority_list[i][2], "\t\t", priority_list[i][3]
             )
