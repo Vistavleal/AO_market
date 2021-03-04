@@ -79,15 +79,3 @@ def sort_outdated(m_data):
         if item["buy_price_max_date"] < _date or \
                 item["buy_price_max_date"] in "0001-01-01T00:00:00":
             item["buy_price_max"] = 0
-
-
-
-
-
-
-
-
-
-
-
-
