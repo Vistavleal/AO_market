@@ -1,3 +1,5 @@
 *.json
 __pycache__/*
 ao_client
+text_parser.py
+*.ipynb
